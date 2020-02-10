@@ -36,17 +36,9 @@ def main():
 	# Twint basic configuration
 	c = twint.Config()
 	c.Search = "my bitcoin address"
-	c.Limit = 100
-	c.Store_object = True
-	c.Custom['tweet']=['tweet']
-	c.Store_object_tweets_list
+	c.Limit = 1000
+	c.Elasticsearch = "http://localhost:9200"
 	# Collect tweets
 	twint.run.Search(c)
-
-	# Create list to parse
-	tweets = twint.output.tweets_list
-
-	# Checking + parsing the tweets and write them in Json file
-	checkOutput(tweets)
 
 main()
