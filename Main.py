@@ -1,6 +1,7 @@
 import twint
 import re
 import json
+import argparse
 
 
 # Bitcoin actual adress regexpr (02/2020)
@@ -33,6 +34,14 @@ def checkOutput(output) :
 
 # Main function
 def main():
+	#Arguments
+	parser = argparse.ArgumentParser(description='Search Bitcoin address in Twitter')
+	parser.add_argument('-n', type=int, nargs='?',help='Number of threads. 100 by default')
+	parser.add_argument('-s',nargs='?',help="Search phrase. 'my bitcoin address' by default")
+	parser.add_argument('-u',nargs='?',help="Username to look after. No username by default")
+	parser.add_argument('-t',nargs='?',help="Tweets since date (Format : YYYY-MM-DD). Last tweets by default")
+	parser.add_argument('-y',nargs='?',help="Tweets before specified year. Last tweets by default")
+	args = parser.parse_args()
 	# Twint basic configuration
 	c = twint.Config()
 	c.Search = "my bitcoin address"
@@ -40,6 +49,19 @@ def main():
 	c.Store_object = True
 	c.Custom['tweet']=['tweet']
 	c.Store_object_tweets_list
+
+	#Arguments passed by user
+	if args.n :
+		c.Limit = args.n
+	if args.s :
+		c.Search = args.s
+	if args.u :
+		c.Username = args.u
+	if args.t :
+		c.Since = args.t
+	if args.y :
+		c.Year = args.y
+
 	# Collect tweets
 	twint.run.Search(c)
 
