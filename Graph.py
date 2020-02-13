@@ -4,8 +4,7 @@ import json
 
 
 # Bitcoin actual adress regexpr (02/2020)
-# Adresses beginning with bc1 or 1 or 3 and finishing with space or EOL
-regexpr = '([13|(bc1)][a-zA-HJ-NP-Z0-9]{25,39})'
+regexpr = '((?:[12359cKLmn]|bc1|xpub|xprv|tpub|tprv|tb1)[a-zA-HJ-NP-Z0-9]{25,})'
 
 
 # Function returns list with addresses in Bitcoin form
