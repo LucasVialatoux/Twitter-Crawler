@@ -45,7 +45,7 @@ Check on your web browser that 'http://localhost:9200/' is working
 
 **Kibana:**
 ```bash
-Download [https://www.elastic.co/downloads/kibana](Kibana)
+Download 'Kibana' from https://www.elastic.co/downloads/kibana
 Go to 'kibana-X.X.X-XXXXXX' folder (where X.X.X-XXXXXX is your version and OS system)
 Open a new cmd in this folder and type : 'kibana'
 Check on your web browser that 'http://localhost:5601/' is working
