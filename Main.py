@@ -11,7 +11,7 @@ from time import perf_counter
 
 
 # Bitcoin actual adress regexpr (02/2020)
-regexpr = '((?:[12359cKLmn]|bc1|xpub|xprv|tpub|tprv|tb1)[a-zA-HJ-NP-Z0-9]{25,})'
+regexpr = '(?:(?!#)\W((?:[12359cKLmn]|bc1|xpub|xprv|tpub|tprv|tb1)[a-km-zA-HJ-NP-Z1-9]{25,})\W)'
 
 
 # Function returns list with addresses in Bitcoin form
@@ -67,7 +67,7 @@ def main():
 	c.Store_object = True
 	c.Custom['tweet']=['tweet']
 	c.Store_object_tweets_list
-	c.Limit = 100
+	c.Limit = 1000
 	#Hide output in terminal
 	c.Hide_output = True
 
