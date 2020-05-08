@@ -4,6 +4,9 @@ import json
 import argparse
 import os
 import sys
+import datetime
+import inspect
+import time
 
 # Python program to show time by perf_counter()  
 from time import perf_counter 
@@ -28,12 +31,14 @@ def matchbool(regexpr,phrase) :
 def checkOutput(output,type) :
 	toAdd = []
 	nbre = 0
+	stamp = ""
 	for i in output :
+		stamp = i.datestamp +" "+ i.timestamp
 		#print(output)
 		if (match(regexpr,i.tweet)!=[]) :
 			addresses = match(regexpr,i.tweet)
 			nbre+=len(addresses)
-			jsonObj = {'username' : i.username,'user ID' : i.user_id, 'addresses' : addresses, 'tweet' : i.tweet}
+			jsonObj = {'username' : i.username,'user ID' : i.user_id,'addresses' : addresses, 'tweet' : i.tweet}
 			toAdd.append(jsonObj)
 	if (type == 'adresse') :
 		with open('addresses.json', 'w') as outfile:
@@ -49,6 +54,8 @@ def checkOutput(output,type) :
 	print('Soit : '+str(round(pourcent,2))+'%')
 	print('---------------------------------------------------------------------------------')
 
+	return stamp
+
 
 # Main function
 def main():
@@ -62,42 +69,40 @@ def main():
 	parser.add_argument('-y',nargs='?',help="Tweets before specified year. Last tweets by default")
 	args = parser.parse_args()
 	# Twint basic configuration
-	c = twint.Config()
-	c.Search = "bitcoin address"
-	c.Store_object = True
-	c.Custom['tweet']=['tweet']
-	c.Store_object_tweets_list
-	c.Limit = 1000
+	cs = twint.Config()
+	cs.Search = "bitcoin address"
+	cs.Store_object = True
+	cs.Custom['tweet']=['tweet']
+	cs.Store_object_tweets_list
+	cs.Limit = 800
 	#Hide output in terminal
-	c.Hide_output = True
+	cs.Hide_output = True
 
+
+	#On a period from 2016 to 2017
+	stopDate = datetime.datetime(2016, 1, 1)
+
+	untilDate = datetime.datetime(2016, 12, 31, 23, 59, 59)
+        
 	#Automatically convert uppercase in lowercase
-	c.Lowercase = True
-
-	#Arguments passed by user
-	if args.n :
-		c.Limit = args.n
-	if args.p :
-		c.Search = args.p
-	if args.u :
-		c.Username = args.u
-	if args.ts :
-		c.Since = args.ts
-	if args.tu :
-		c.Until = args.tu
-	if args.y :
-		c.Year = args.y
+	cs.Lowercase = True
 
 	# Start the stopwatch / counter 
 	t1_start = perf_counter()
 
-	# Collect tweets
-	twint.run.Search(c)
+	while(stopDate < untilDate):
+		cs.Until = str(untilDate)
 
-	# Create list to parse
-	tweets = twint.output.tweets_list
-	# Checking + parsing the tweets and write them in Json file
-	checkOutput(tweets,'adresse')
+		# Collect tweets
+		twint.run.Search(cs)
+
+		# Create list to parse
+		tweets = twint.output.tweets_list
+		# Checking + parsing the tweets and write them in Json file
+		untilDate = datetime.datetime.strptime(checkOutput(tweets,'adresse'), "%Y-%m-%d %H:%M:%S")
+
+		print(str(untilDate))
+		time.sleep(30)
 
 	# Twint followers configuration
 	#f = twint.Config()
