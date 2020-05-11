@@ -13,7 +13,7 @@ from time import perf_counter
 
 
 
-# Bitcoin actual adress regexpr (02/2020)
+# Bitcoin actual adress regexpr (05/2020)
 regexpr = '(?:(?!#)\W((?:[12359cKLmn]|bc1|xpub|xprv|tpub|tprv|tb1)[a-km-zA-HJ-NP-Z1-9]{25,})\W)'
 
 
@@ -30,16 +30,23 @@ def matchbool(regexpr,phrase) :
 #Function checking output of Twint and write 
 def checkOutput(output,type) :
 	toAdd = []
+	addressesRemember = []
 	nbre = 0
 	stamp = ""
 	for i in output :
 		stamp = i.datestamp +" "+ i.timestamp
 		#print(output)
-		if (match(regexpr,i.tweet)!=[]) :
-			addresses = match(regexpr,i.tweet)
-			nbre+=len(addresses)
-			jsonObj = {'username' : i.username,'user ID' : i.user_id,'addresses' : addresses, 'tweet' : i.tweet}
+		addresses = match(regexpr,i.tweet)
+		localAdr = []
+		for adr in addresses:
+			if(not(adr in localAdr)):
+				localAdr.append(adr)
+		if (match(regexpr,i.tweet)!=[] and not(localAdr in addressesRemember)) :
+			
+			nbre+=len(localAdr)
+			jsonObj = {'username' : i.username,'user ID' : i.user_id,'addresses' : localAdr, 'tweet' : i.tweet}
 			toAdd.append(jsonObj)
+			addressesRemember.append(localAdr)
 	if (type == 'adresse') :
 		with open('addresses.json', 'w') as outfile:
 			json.dump(toAdd,outfile,indent=2)
@@ -61,12 +68,9 @@ def checkOutput(output,type) :
 def main():
 	#Arguments
 	parser = argparse.ArgumentParser(description='Search Bitcoin addresses on Twitter')
-	parser.add_argument('-n', type=int, nargs='?',help='Number of threads. 100 by default')
-	parser.add_argument('-p',nargs='?',help="Search phrase. 'my bitcoin address' by default")
-	parser.add_argument('-u',nargs='?',help="Username to look after. No username by default")
-	parser.add_argument('-ts',nargs='?',help="Tweets since date (Format : YYYY-MM-DD). Last tweets by default")
-	parser.add_argument('-tu',nargs='?',help="Tweets until date (Format : YYYY-MM-DD). Last tweets by default")
-	parser.add_argument('-y',nargs='?',help="Tweets before specified year. Last tweets by default")
+	parser.add_argument('-p',nargs='?',help="Search phrase. 'bitcoin address' by default")
+	parser.add_argument('-ts',nargs='?',help="Tweets since date (Format : YYYY-MM-DD). 2016-01-01 by default")
+	parser.add_argument('-tu',nargs='?',help="Tweets until date (Format : YYYY-MM-DD). 2016-12-31 by default")
 	args = parser.parse_args()
 	# Twint basic configuration
 	cs = twint.Config()
@@ -78,14 +82,38 @@ def main():
 	#Hide output in terminal
 	cs.Hide_output = True
 
-
-	#On a period from 2016 to 2017
+	#Default search : period from 2016 to 2017
 	stopDate = datetime.datetime(2016, 1, 1)
 
 	untilDate = datetime.datetime(2016, 12, 31, 23, 59, 59)
         
 	#Automatically convert uppercase in lowercase
 	cs.Lowercase = True
+
+	#Arguments passed by user
+	if args.p :
+		#Search phrase
+		cs.Search = args.p
+
+	if args.tu :
+		#Split until date
+		untilSplitted = args.tu.split("-", 3)
+		untilDate = datetime.datetime(int(untilSplitted[0]), int(untilSplitted[1]), int(untilSplitted[2]), 23, 59, 59)
+		
+
+	if args.ts :
+		#Split since date
+		stopSplitted = args.ts.split("-", 3)
+
+		newStopDate = datetime.datetime(int(stopSplitted[0]), int(stopSplitted[1]), int(stopSplitted[2]))
+
+		#Check since date before until date
+		if newStopDate < untilDate :
+			stopDate = newStopDate
+			
+		else :
+			print("Votre date : ",newStopDate," est > a la date de fin : ",untilDate,". \nVeuillez recommencer en entrant une date anterieure a la date de fin.")
+			return
 
 	# Start the stopwatch / counter 
 	t1_start = perf_counter()

@@ -10,23 +10,11 @@
 Récupérer les adresses reliées à des utilisateurs sur Twitter en crawlant Twitter.
 
 ## Statistiques :
-**1.000 threads**
-- Nombre de tweets : 1004
-- Nombre d'adresses récoltées : 217
-- Pourcentage : 21.61%
-- Durée traitement : 0.8 minutes
-
-**10.000 threads**
-- Nombre de tweets : 10.002
-- Nombre d'adresses récoltées : 3028
-- Pourcentage : 30%
-- Durée traitement : 8 minutes
-
-**50.000 threads**
-- Nombre de tweets : 12.059
-- Nombre d'adresses : 4090
-- Pourcentage : 34%
-- Durée traitement : 11 minutes
+**2016/01/01 jusqu'à 2016/12/31**
+- Nombre de tweets : 11590
+- Nombre d'adresses récoltées : 361
+- Pourcentage : 3.11%
+- Durée de la recherche : 18.97 min
 
 
 
@@ -54,34 +42,24 @@ python3 Main.py
 ```
 
 ## Some examples :
-**Get last 100 tweets**
+**Default search : get adresses since 2016/01/01 and until 2016/12/31**
 ```bash
 py Main.py
 ```
 
-**Get last 1.000 tweets since 2016/01/01 and until 2016/01/31**
+**Get adresses since 2019/03/15 and until 2019/12/31**
 ```bash
-py Main.py -n 1000 -ts 2016-01-01 -tu 2016-01-31
+py Main.py -ts 2019-03-15 -tu 2019-12-31
 ```
 
-**Get last 1.000 tweets since 2016/01/01 and until 2016/01/31**
+**Get adresses with this searching phrase : 'my btc wallet is'**
 ```bash
-py Main.py -n 1000 -ts 2016-01-01 -tu 2016-01-31
+py Main.py -p 'my btc wallet is'
 ```
 
-**Get last 1.000 tweets before 2016**
+**Get adresses with this searching phrase : 'my btc wallet is' since 2019/03/15 and until 2019/12/31**
 ```bash
-py Main.py -n 1000 -y 2016
-```
-
-**Get last 1.000 tweets from username 'test'**
-```bash
-py Main.py -n 1000 -u test
-```
-
-**Get last 1.000 tweets with this searching phrase : 'my btc wallet is'**
-```bash
-py Main.py -n 1000 -p 'my btc wallet is'
+py Main.py -p 'my btc wallet is' -ts 2019-03-15 -tu 2019-12-31
 ```
 
 ## Advanced Installation (with visualization) :
